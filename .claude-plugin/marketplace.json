@@ -9,6 +9,11 @@
       "name": "token-band",
       "source": "./plugins/token-band",
       "description": "在输入框上方实时显示 token 用量、输出速度、缓存命中率、订阅额度和费用，并检测模型是否被切换或降级"
+    },
+    {
+      "name": "quick-commands",
+      "source": "./plugins/quick-commands",
+      "description": "在模型名右边加一个 ⚡ 按钮，点开面板用点选代替手打斜杠命令，并可直接点选修改 /config 设置；支持中英文界面"
     }
   ]
 }
