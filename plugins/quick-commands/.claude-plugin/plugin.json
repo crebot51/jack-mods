@@ -1,6 +1,6 @@
 {
   "name": "quick-commands",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "在模型名右边加一个 ⚡ 按钮，点开面板用点选代替手打斜杠命令，并可直接点选修改 /config 设置；支持中英文界面",
   "author": {
     "name": "jack"

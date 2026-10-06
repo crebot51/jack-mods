@@ -486,8 +486,8 @@ export const register: Register = on => {
         let controls: RenderChildren = null
         let options: readonly string[] = []
         if (row.isLocked) {
-          controls = <Text dimColor>🔒 {showValue(row.value)}</Text>
-          options = [showValue(row.value)]
+          controls = <Text dimColor>🔒 {showValue(row.value, lang)}</Text>
+          options = [showValue(row.value, lang)]
         } else if (row.kind === 'boolean') {
           controls = (
             <Box flexDirection="row" columnGap={1}>
@@ -520,8 +520,8 @@ export const register: Register = on => {
             </Box>
           )
         } else {
-          controls = <Text dimColor>{showValue(row.value)}</Text>
-          options = [showValue(row.value)]
+          controls = <Text dimColor>{showValue(row.value, lang)}</Text>
+          options = [showValue(row.value, lang)]
         }
         const oneLine = fitsOneLine(label, options, width)
         return (

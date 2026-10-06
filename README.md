@@ -1,60 +1,78 @@
 # jack-mods
 
-自己写的 Claude Code mods。
+**English** · [简体中文](README.zh-CN.md)
+
+My own Claude Code mods.
 
 ## token-band
 
-在输入框上方实时显示 token 用量：
+A live token-usage band above the prompt box:
 
-![展开状态](docs/token-band-expanded.png)
+![Expanded](docs/token-band-expanded.png)
 
-点「收起」后整栏消失，只在输入框下方工具栏右侧留一个 🪙，点它展开：
+Click "收起" (collapse) and the whole band disappears; only a 🪙 is left at the right of the toolbar below the prompt box. Click it to expand again:
 
-![收起状态](docs/token-band-collapsed.png)
+![Collapsed](docs/token-band-collapsed.png)
 
 ```
 271.1k/1.00M (27%) · 本轮 3.3k · 113 tok/s · 总输入 7.92M · 总输出 38.4k · 缓存 98% · $8.58 · 5h 99% · 7d 70% ✅   [收起]
 ```
 
-| 项目 | 含义 |
-|---|---|
-| `271.1k/1.00M (27%)` | 当前上下文占用 / 模型窗口 |
-| `本轮` | 这一轮已生成的输出 token，回复过程中实时跳动 |
-| `tok/s` | 平均输出速度：总输出 ÷ 总生成时间（从首个字到最后一个字，不含等待首字） |
-| `总输入` / `总输出` | 本会话累计，含缓存读写和子 agent |
-| `缓存` | 总输入中命中缓存的比例，越高越省钱 |
-| `$` | 本会话费用 |
-| `5h` / `7d` | 订阅账号的 5 小时 / 7 天额度已用比例（按 API 计费时不显示） |
-| `✅` / `❌` | 模型检测：主对话被切到别的模型、接口返回的模型和请求的不一致、或思考强度被静默调低时变成 ❌，并弹出提示说明原因 |
+> The band's own labels are still in Chinese (本轮 = this turn, 总输入 / 总输出 = total input / output, 缓存 = cache, 收起 = collapse).
 
-- 窗口窄时自动折成两行，「收起」按钮固定在第一行右边
-- 也可以输入 `/tokens` 在展开和收起之间切换
+| Item | Meaning |
+|---|---|
+| `271.1k/1.00M (27%)` | Current context size / model window |
+| `本轮` (this turn) | Output tokens generated so far this turn, ticking up while the reply streams |
+| `tok/s` | Average output speed: total output ÷ total generation time (first to last token, excluding time to first token) |
+| `总输入` / `总输出` (total in / out) | Session totals, including cache reads/writes and subagents |
+| `缓存` (cache) | Share of total input served from cache; higher is cheaper |
+| `$` | Session cost |
+| `5h` / `7d` | Share of the 5-hour / 7-day subscription limit used (hidden on API billing) |
+| `✅` / `❌` | Model check: turns ❌ and shows a toast with the reason when the main thread was switched to another model, the model returned by the API differs from the one requested, or thinking effort was silently lowered |
+
+- On narrow windows the band wraps to two lines, with the collapse button pinned to the right of the first line.
+- You can also type `/tokens` to toggle between expanded and collapsed.
 
 ## quick-commands
 
-在模型名右边加一个 ⚡ 按钮，点开右侧面板，不用再手打 `/xxx`：
+Adds a ⚡ button to the right of the model name. It opens a side panel so you don't have to type `/xxx` by hand:
 
-- **命令页**：列出当前会话的全部斜杠命令（内置、自己的、插件和 skill、MCP），按分组显示，可搜索。
-  - 常用内置命令（`/compact`、`/clear`、`/context`、`/cost`、`/resume` 等）点一下直接执行。
-  - 其余命令（技能、插件、MCP 等）点一下只把 `/名字 ` 填进输入框，接着补参数再发送，不会误触发。
-  - 内置命令右边的 `⋯` 可手动填参数；命令输出里列出「Available: a, b, c」时会记住，下次直接给选项按钮。
-- **设置页**：把 `/config` 里的设置做成点选：开关点「开 / 关」，多选一直接点选项，文字、数字给输入框。当前值是蓝底。
-- **中英文**：界面默认跟着 `settings.json` 的 `language` 或系统语言，也可以点 🌐 手动在「自动 / 中文 / English」间切换。中文下命令和设置的英文说明会用 haiku 翻成中文并缓存；英文下原样显示引擎自带的说明。
-- 点 ⚡ 打开，再点（此时是 ✕）或按 Esc 关闭。
+- **Commands tab**: lists every slash command in the current session (built-in, your own, plugins and skills, MCP), grouped and searchable.
+  - Common built-ins (`/compact`, `/clear`, `/context`, `/cost`, `/resume`, …) run with one click.
+  - Everything else (skills, plugin and MCP commands) only fills `/name ` into the prompt box so you can add arguments and send it yourself. Nothing fires by accident.
+  - The `⋯` next to a built-in lets you type arguments; when a command's output lists "Available: a, b, c" the mod remembers it and shows those as buttons next time.
+- **Settings tab**: the `/config` settings as click targets. Toggles get On / Off, pick-one settings get one button per option, text and number settings get an input box. The current value has a blue background.
+- **Chinese / English**: the UI follows `language` in `settings.json` or the system language by default; the 🌐 button switches between Auto / 中文 / English by hand. In Chinese, the English command and setting descriptions are translated with haiku and cached. In English, the engine's own descriptions are shown untouched.
+- Click ⚡ to open; click it again (now ✕) or press Esc to close.
 
-## 安装
+The ⚡ button, to the right of the model name:
 
-一行命令（复制到终端回车即可）：
+![Button](docs/quick-commands-button.png)
+
+Chinese UI (Commands tab and Settings tab):
+
+![Commands tab (Chinese)](docs/quick-commands-commands-zh.webp)
+![Settings tab (Chinese)](docs/quick-commands-settings-zh.png)
+
+English UI (descriptions and setting names are the engine's originals, unchanged):
+
+![Commands tab (English)](docs/quick-commands-commands-en.png)
+![Settings tab (English)](docs/quick-commands-settings-en.png)
+
+## Install
+
+One line (paste into a terminal):
 
 ```bash
 claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods
 ```
 
-想装 quick-commands，把最后的名字换成 `quick-commands@jack-mods`（marketplace 已添加过就不用再 add）。
+To install quick-commands, swap the last name for `quick-commands@jack-mods` (no need to add the marketplace again if you already have).
 
-装好后开一个新会话：token-band 的用量条桌面端需要先发一条消息才出现；quick-commands 的 ⚡ 在模型名右边。
+Then start a new session. token-band's band shows up on desktop only after the first message; quick-commands' ⚡ sits to the right of the model name.
 
-更新：`claude plugin update <名字>`
-卸载：`claude plugin uninstall <名字>`
+Update: `claude plugin update <name>`
+Uninstall: `claude plugin uninstall <name>`
 
-> mod 接口目前是早期预览，Claude Code 版本差异较大时可能需要更新。
+> The mod API is an early preview and may need updates across Claude Code versions.
