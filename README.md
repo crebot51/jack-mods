@@ -26,7 +26,7 @@
 claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods
 ```
 
-装好后开一个新会话就能看到用量条。
+装好后开一个新会话即可看到用量条（桌面端需要先发一条消息）。
 
 更新：`claude plugin update token-band`
 卸载：`claude plugin uninstall token-band`
