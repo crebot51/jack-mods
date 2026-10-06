@@ -1,0 +1,14 @@
+{
+  "name": "jack-mods",
+  "owner": {
+    "name": "jack"
+  },
+  "description": "jack 的 Claude Code mods 合集",
+  "plugins": [
+    {
+      "name": "token-band",
+      "source": "./plugins/token-band",
+      "description": "在输入框上方实时显示 token 用量、上下文占用、平均输出速度和费用"
+    }
+  ]
+}

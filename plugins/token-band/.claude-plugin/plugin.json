@@ -1,0 +1,10 @@
+{
+  "name": "token-band",
+  "version": "0.1.0",
+  "description": "在输入框上方实时显示 token 用量",
+  "author": {
+    "name": "jack"
+  },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}
