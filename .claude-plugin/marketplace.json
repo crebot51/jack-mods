@@ -8,7 +8,7 @@
     {
       "name": "token-band",
       "source": "./plugins/token-band",
-      "description": "在输入框上方实时显示 token 用量、上下文占用、平均输出速度和费用"
+      "description": "在输入框上方实时显示 token 用量、输出速度、缓存命中率、订阅额度和费用，并检测模型是否被切换或降级"
     }
   ]
 }

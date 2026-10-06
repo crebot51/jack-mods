@@ -1,7 +1,7 @@
 {
   "name": "token-band",
-  "version": "0.2.0",
-  "description": "在输入框上方实时显示 token 用量",
+  "version": "0.3.0",
+  "description": "在输入框上方实时显示 token 用量、输出速度、缓存命中率、订阅额度和费用，并检测模型是否被切换或降级",
   "author": {
     "name": "jack"
   },
