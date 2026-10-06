@@ -149,7 +149,7 @@ export const register: Register = on => {
     return (
       <Box>
         <Text dimColor>
-          🪙 {ctx} │ {turn} │ {speed} │ {total}
+          {ctx} │ {turn} │ {speed} │ {total}
           {cost}{' '}
         </Text>
         <Button
