@@ -48,15 +48,10 @@
 
 ![按钮](docs/quick-commands-button.png)
 
-中文界面（命令页、设置页）：
+命令页和设置页：
 
 ![命令页（中文）](docs/quick-commands-commands-zh.webp)
 ![设置页（中文）](docs/quick-commands-settings-zh.png)
-
-英文界面（说明、设置名都是引擎原文，没有改动）：
-
-![Commands (English)](docs/quick-commands-commands-en.png)
-![Settings (English)](docs/quick-commands-settings-en.png)
 
 ## 安装
 
