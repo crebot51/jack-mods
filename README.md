@@ -61,19 +61,21 @@ The panel in English (descriptions and setting names are the engine's originals,
 
 ## translate-en
 
-Translates every message you send into English before it reaches Claude, using **your own OpenAI-compatible API** (custom Base URL + key), not your Claude subscription. Made for someone learning Chinese: type in Chinese, Claude reads English and replies in Chinese.
+Translates every message you send into English before it reaches Claude, using **your own model access**, not your Claude subscription. Made for someone learning Chinese: type in Chinese, Claude reads English and replies in Chinese.
 
 - A 🌐 button always sits next to the model name, from the moment a session opens. It is dimmed when translation is off or not set up yet.
-- Click it to open the settings panel: on / off switch, Base URL, API key, model (fetched from `/models` and picked from a list, or typed by hand), and a Test button that translates a sample sentence.
-- Only messages you type are translated. Slash commands, English-only messages, and background notifications are sent as they are.
-- **Reply in Chinese** (on by default): adds one section to the session's system prompt saying the user is learning Chinese and wants replies in Simplified Chinese, and attaches the original text to each translated message. Only the model sees it; the transcript shows the English translation.
+- Click it to open the settings panel and pick where translations come from:
+  - **OpenAI-compatible API**: Base URL, API key, and a model fetched from `/models` (or typed by hand).
+  - **ChatGPT subscription**: *Continue with ChatGPT* opens your browser to sign in with ChatGPT (Plus / Pro) and allow plan usage; no API key. Models come from your account. It follows OpenAI's [Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) flow for open-source local apps (PKCE, loopback callback on `127.0.0.1`, ID token signature check). macOS only.
+  - A Test button translates a sample sentence with the current setup.
+- What gets translated: messages you type, and the arguments of skill, plugin, MCP and your own slash commands (plus `/compact`'s instructions). English-only text, other built-in commands' arguments (`/model`, `/resume`, ...) and background notifications are left as they are.
+- Claude is told, once in the session's system prompt, that you are learning Chinese and want replies in Simplified Chinese; each translated message carries its original text as extra context only the model sees. The transcript shows the English translation.
 - If translation fails or takes longer than 9 seconds, the original text is sent and a toast says why.
-- Requests carry a stable `x-opencode-session` header and their own User-Agent, as OpenCode Go requires; other providers ignore them.
-- Only `/chat/completions` is used, so a model must be served there. OpenCode's free-tier models refuse calls from outside OpenCode.
+- Requests to OpenAI-compatible APIs carry a stable `x-opencode-session` header and their own User-Agent, as OpenCode Go requires; other providers ignore them. Only `/chat/completions` is used there, and OpenCode's free-tier models refuse calls from outside OpenCode.
 
 > The panel's labels are currently Chinese.
 >
-> The key is stored **in plain text** in the plugin's local store (`~/.claude/plugins/store/translate-en_*.json`, readable only by your macOS user).
+> Storage: the API key is kept **in plain text** in the plugin's local store (`~/.claude/plugins/store/translate-en_*.json`, readable only by your macOS user). ChatGPT sign-in credentials are kept **in the macOS Keychain** (`claude-translate-en`). To cut off a ChatGPT sign-in, use *Sign out* in the panel or disconnect the app in [ChatGPT settings](https://chatgpt.com/settings/usage).
 
 ## Install
 

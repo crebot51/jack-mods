@@ -18,7 +18,7 @@
     {
       "name": "translate-en",
       "source": "./plugins/translate-en",
-      "description": "发消息前用你自己的 OpenAI 兼容接口（自定义 Base URL + Key）把消息翻成英文再发给 Claude；模型名旁常驻 🌐 按钮可设置和开关"
+      "description": "发消息前用你自己的 OpenAI 兼容接口或 ChatGPT 订阅把消息翻成英文再发给 Claude，并让 Claude 用中文回复；模型名旁常驻 🌐 按钮可设置和开关"
     }
   ]
 }

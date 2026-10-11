@@ -1,6 +1,6 @@
 {
   "name": "translate-en",
-  "version": "0.3.1",
+  "version": "0.5.1",
   "description": "把你发出的每条消息先用你自己的 OpenAI 兼容接口（自定义 Base URL + Key）翻成英文再发给 Claude；模型名旁边常驻 🌐 按钮可设置和开关",
   "author": { "name": "jack" },
   "license": "MIT",

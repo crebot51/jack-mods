@@ -80,7 +80,7 @@ describe('translate-en', () => {
       await pane.press({ key: 'fetch-models' })
       await pane.press({ key: 'm:gpt-x' })
       await pane.press({ key: 'enable' })
-      expect(stored.config).toEqual({ enabled: true, baseUrl: 'https://x.com/v1', apiKey: 'sk-secret-123456', model: 'gpt-x', replyInChinese: true })
+      expect(stored.config).toEqual({ enabled: true, baseUrl: 'https://x.com/v1', apiKey: 'sk-secret-123456', model: 'gpt-x', provider: 'openai', chatgptModel: '', chatgptEmail: '' })
       expect((await button.find({ key: 'translate-toggle', text: '🌐' }))?.props.dimColor).toBe(false)
 
       // 用户发中文：先走自定义接口翻成英文
@@ -103,12 +103,6 @@ describe('translate-en', () => {
       expect(sent).toEqual(['Hello', 'hello', '后台通知'])
       expect(contexts[1]).toBeUndefined()
 
-      // 关掉「用中文回复」就只发译文
-      await pane.press({ key: 'reply-zh' })
-      await $.prompt.submit({ text: '再见', wait: false, origin: { kind: 'composer' } })
-      expect(sent[3]).toBe('Hello')
-      expect(contexts[3]).toBeUndefined()
-      expect((await $.prompt.compose(COMPOSE)).sections.map(x => x.id)).toEqual(['intro'])
     })
   }
 
@@ -136,4 +130,65 @@ describe('translate-en', () => {
     expect(sent).toEqual(['你好'])
     expect(toasts.some(t => t.includes('翻译失败，已发送原文') && t.includes('9 秒'))).toBe(true)
   })
+
+  test('ChatGPT 订阅：凭证从钥匙串读，走 Responses API 翻译', async ($, on) => {
+    mock.clock(on, { now: 1_000_000 })
+    const creds = { clientId: 'oaiapp_1', sub: 's', email: 'a@b.c', idToken: 'i', accessToken: 'AT', refreshToken: 'RT', expiresAt: 1_000_000 + 3_600_000, scopes: ['chatgpt.tokens.use.direct'] }
+    const blob = btoa(JSON.stringify(creds)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    mock.store(on, { config: { enabled: true, baseUrl: '', apiKey: '', model: '', provider: 'chatgpt', chatgptModel: 'gpt-6-luna', chatgptEmail: 'a@b.c' } })
+    const argvs: string[][] = []
+    on('process.run', (_$, e) => {
+      argvs.push([...e.argv])
+      return { value: { exitCode: 0, stdout: e.argv[1] === 'find-generic-password' ? `${blob}\n` : '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
+    })
+    const calls: { url: string; auth?: string; body?: string }[] = []
+    on('http.fetch', (_$, e) => {
+      calls.push({ url: e.url, auth: e.init?.headers?.Authorization, body: e.init?.body })
+      const text = 'data: {"type":"response.output_text.delta","delta":"Hello"}\n\ndata: {"type":"response.completed"}\n\n'
+      return { value: { status: 200, ok: true, headers: {}, text } }
+    })
+    on('ui.toast', () => ({ value: undefined }))
+    on('ui.status', () => ({ value: undefined }))
+    const sent: string[] = []
+    on('prompt.submit', (_$, e) => {
+      sent.push(e.text)
+      return { text: e.text }
+    })
+    await $.prompt.submit({ text: '你好', wait: false, origin: { kind: 'composer' } })
+    expect(sent).toEqual(['Hello'])
+    expect(argvs[0]).toEqual(['security', 'find-generic-password', '-s', 'claude-translate-en', '-a', 'chatgpt', '-w'])
+    expect(calls[0]?.url).toBe('https://api.openai.com/v1/responses')
+    expect(calls[0]?.auth).toBe('Bearer AT')
+    const body = JSON.parse(calls[0]?.body ?? '{}')
+    expect(body.model).toBe('gpt-6-luna')
+    expect(body.store).toBe(false)
+    expect(body.stream).toBe(true)
+    expect(body.temperature).toBeUndefined()
+  })
+
+  test('斜杠命令：技能和 /compact 的参数翻译，/model 这类内置命令不翻', async ($, on) => {
+    mock.clock(on)
+    mock.store(on, { config: { enabled: true, baseUrl: 'https://x.com/v1', apiKey: 'k', model: 'm', provider: 'openai' } })
+    on('session.id', () => ({ value: 'abc' }))
+    on('ui.toast', () => ({ value: undefined }))
+    on('ui.status', () => ({ value: undefined }))
+    on('command.list', () => ({ value: [
+      { name: 'review-pr', description: '', source: 'plugin' },
+      { name: 'compact', description: '', source: 'builtin' },
+      { name: 'model', description: '', source: 'builtin' },
+    ] }))
+    on('http.fetch', () => ({ value: { status: 200, ok: true, headers: {}, text: '{"choices":[{"message":{"content":"check the login logic"}}]}' } }))
+    const ran: string[] = []
+    on('command.run', (_$, e) => {
+      ran.push(`${e.command}|${e.args}`)
+      return { text: '' }
+    })
+    const presentation = { layout: 'main', columns: 80 } as never
+    await $.command.run({ command: 'review-pr', args: '帮我看看登录逻辑', origin: { kind: 'composer' }, presentation })
+    await $.command.run({ command: 'compact', args: '保留数据库相关的讨论', origin: { kind: 'composer' }, presentation })
+    await $.command.run({ command: 'model', args: '小模型', origin: { kind: 'composer' }, presentation })
+    await $.command.run({ command: 'review-pr', args: 'PR 123', origin: { kind: 'composer' }, presentation })
+    expect(ran).toEqual(['review-pr|check the login logic', 'compact|check the login logic', 'model|小模型', 'review-pr|PR 123'])
+  })
+
 })

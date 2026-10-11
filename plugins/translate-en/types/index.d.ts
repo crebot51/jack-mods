@@ -6,9 +6,18 @@ export type TranslateConfig = {
   baseUrl: string
   apiKey: string
   model: string
-  /** 附一条只给 Claude 看的说明：用户在学中文，请用中文回复，并附上原文 */
-  replyInChinese: boolean
+  /** 用哪种接口翻译：OpenAI 兼容接口（Base URL + Key），或 ChatGPT 订阅登录 */
+  provider: Provider
+  /** ChatGPT 订阅下选的模型 slug */
+  chatgptModel: string
+  /** 已登录的 ChatGPT 账号邮箱，只用来显示；凭证在钥匙串里 */
+  chatgptEmail: string
 }
+
+export type Provider = 'openai' | 'chatgpt'
+
+/** ChatGPT 账号可用的模型 */
+export type ChatGPTModelItem = { slug: string; name: string }
 
 declare module 'claude-code' {
   interface PluginState {
@@ -19,6 +28,7 @@ declare module 'claude-code' {
       modelQuery: string
       notice: string
       busy: boolean
+      chatgptModels: ChatGPTModelItem[]
     }
   }
 }

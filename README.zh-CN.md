@@ -59,17 +59,19 @@
 
 ## translate-en
 
-你发出的每条消息，先用**你自己的 OpenAI 兼容接口**（自定义 Base URL + Key）翻成英文再发给 Claude，不占 Claude 订阅的额度。适合学中文的人：用中文打字，Claude 读英文、用中文回复。
+你发出的每条消息，先用**你自己的模型额度**翻成英文再发给 Claude，不占 Claude 订阅。适合学中文的人：用中文打字，Claude 读英文、用中文回复。
 
 - 模型名旁边常驻一个 🌐 按钮，会话一打开就在；翻译关着或还没配置好时是灰色
-- 点开是设置面板：开关、Base URL、API Key、模型（从 `/models` 拉取后在列表里点选，也可以手动填），以及「测试」按钮，用一句示例中文实际调用一次
-- 只翻译你自己打的消息；斜杠命令、纯英文、后台通知原样发送
-- **用中文回复**（默认开启）：在会话的系统提示词里加一节，说明用户在学中文、请用简体中文回复，并在每条翻译过的消息后附上原文。这些只有模型能看到，对话记录里显示的是英文译文
+- 点开是设置面板，选择用什么翻译：
+  - **OpenAI 兼容接口**：填 Base URL、API Key，模型从 `/models` 拉取后点选，也可以手动填
+  - **ChatGPT 订阅**：点「Continue with ChatGPT」在浏览器里用 ChatGPT（Plus / Pro）登录并允许使用订阅额度，不需要 API Key，模型列表来自你的账号。按 OpenAI 给开源本地应用的 [Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) 流程实现（PKCE、`127.0.0.1` 本地回调、ID token 验签）。仅支持 macOS
+  - 「测试」按钮用当前设置翻译一句示例中文
+- 会翻译的：你打的消息，以及技能、插件、MCP、你自己写的斜杠命令的参数（还有 `/compact` 后面的说明）。纯英文、其他内置命令的参数（`/model`、`/resume` 等）、后台通知原样发送
+- 会在会话的系统提示词里说明一次：用户在学中文，请用简体中文回复；每条翻译过的消息附上中文原文，只有模型能看到，对话记录里显示的是英文译文
 - 翻译失败或超过 9 秒没返回，就照原文发送，并弹出提示说明原因
-- 请求会带上固定的 `x-opencode-session` 和自己的 User-Agent（OpenCode Go 要求），其他接口会忽略
-- 只调用 `/chat/completions`，模型必须支持这个接口；OpenCode 的免费模型只能在 OpenCode 里用，第三方调用会被拒绝
+- 走 OpenAI 兼容接口时，请求会带上固定的 `x-opencode-session` 和自己的 User-Agent（OpenCode Go 要求），其他接口会忽略。这种方式只调用 `/chat/completions`；OpenCode 的免费模型只能在 OpenCode 里用，第三方调用会被拒绝
 
-> Key **明文**保存在插件的本地存储里（`~/.claude/plugins/store/translate-en_*.json`，只有当前 macOS 用户可读）。
+> 保存方式：API Key **明文**保存在插件的本地存储里（`~/.claude/plugins/store/translate-en_*.json`，只有当前 macOS 用户可读）；ChatGPT 登录凭证**加密存进 macOS 钥匙串**（条目名 `claude-translate-en`）。要断开 ChatGPT 登录，在面板里点「退出登录」，或在 [ChatGPT 设置](https://chatgpt.com/settings/usage) 里断开这个应用。
 
 ## 安装
 
