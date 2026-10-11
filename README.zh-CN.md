@@ -75,17 +75,90 @@
 
 ## 安装
 
-一行命令（复制到终端回车即可）：
+### 准备
+
+- 已安装 [Claude Code](https://code.claude.com)，终端里能运行 `claude`。这几个 mod 在终端和桌面端都能用
+- translate-en 需要一个 OpenAI 兼容接口（Base URL + Key），或者 ChatGPT Plus / Pro 订阅。用 ChatGPT 登录只支持 macOS，会用到 macOS 自带的 `perl` 和 `security`
+
+### 一次装全部三个（推荐）
+
+复制到终端回车：
 
 ```bash
-claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods
+claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods && claude plugin install quick-commands@jack-mods && claude plugin install translate-en@jack-mods
 ```
 
-想装 quick-commands 或 translate-en，把最后的名字换成 `quick-commands@jack-mods` 或 `translate-en@jack-mods`（marketplace 已添加过就不用再 add）。
+这行命令先添加 `jack-mods` 插件市场（只需一次），再把三个 mod 装到当前用户下，所有项目都能用。
 
-装好后开一个新会话：token-band 的用量条桌面端需要先发一条消息才出现；quick-commands 的 ⚡ 和 translate-en 的 🌐 在模型名旁边。
+### 只装其中几个
 
-更新：`claude plugin update <名字>`
-卸载：`claude plugin uninstall <名字>`
+先添加一次插件市场，再装想要的：
+
+```bash
+claude plugin marketplace add crebot51/jack-mods
+```
+
+```bash
+claude plugin install token-band@jack-mods
+```
+
+```bash
+claude plugin install quick-commands@jack-mods
+```
+
+```bash
+claude plugin install translate-en@jack-mods
+```
+
+### 装好之后
+
+1. 开一个**新**会话。装之前就开着的会话不会加载新装的 mod，可以在里面运行 `/reload-plugins`，或者新开一个
+2. 确认装上了：
+   - **token-band**：输入框上方的用量条。桌面端要先发一条消息才出现
+   - **quick-commands**：模型名旁边的 ⚡
+   - **translate-en**：模型名旁边的 🌐，没配置好之前是灰色
+3. 配置 translate-en：点 🌐，然后
+   - 选「OpenAI 兼容接口」，填 Base URL 和 Key（各点一次「保存」），点「获取模型列表」选一个模型；**或者**
+   - 选「ChatGPT 订阅」，点「Continue with ChatGPT」，在浏览器里登录并允许使用订阅额度，再选一个模型
+   - 点「测试」，然后打开「状态」开关，🌐 就不再是灰色了
+
+查看已经装了哪些：
+
+```bash
+claude plugin list
+```
+
+### 更新
+
+先拉取最新的插件市场，再逐个更新：
+
+```bash
+claude plugin marketplace update jack-mods && claude plugin update token-band@jack-mods && claude plugin update quick-commands@jack-mods && claude plugin update translate-en@jack-mods
+```
+
+更新后开一个新会话，或者在已开的会话里运行 `/reload-plugins`。
+
+### 卸载
+
+卸载某一个：`claude plugin uninstall <名字>@jack-mods`
+
+全部卸载，并移除插件市场：
+
+```bash
+claude plugin uninstall token-band@jack-mods && claude plugin uninstall quick-commands@jack-mods && claude plugin uninstall translate-en@jack-mods && claude plugin marketplace remove jack-mods
+```
+
+如果在 translate-en 里用 ChatGPT 登录过，卸载前先在面板里点「退出登录」，这样会吊销登录并清掉钥匙串里的凭证。忘了的话，到 [ChatGPT 设置](https://chatgpt.com/settings/usage) 里断开这个应用，再在「钥匙串访问」里删掉 `claude-translate-en` 开头的条目。
+
+### 常见问题
+
+| 现象 | 怎么办 |
+|---|---|
+| 装完看不到 ⚡ / 🌐 / 用量条 | 会话是安装前开的：运行 `/reload-plugins` 或新开一个会话 |
+| 桌面端 token-band 什么都不显示 | 先发一条消息，第一轮结束后用量条才出现 |
+| 🌐 一直是灰色 | translate-en 没打开或没配置好：打开面板配置好，再打开「状态」开关 |
+| 弹出“翻译失败，已发送原文” | 点面板里的「测试」看接口返回的具体错误。用 OpenCode 时，免费模型只能在 OpenCode 里用，换一个付费模型 |
+| 「Continue with ChatGPT」失败 | 确认是 Plus 或 Pro 订阅，并在浏览器里允许了使用订阅额度；macOS 询问钥匙串权限时点允许，然后重试 |
+| `claude plugin install` 提示找不到插件 | 运行 `claude plugin marketplace update jack-mods` 后再试 |
 
 > mod 接口目前是早期预览，Claude Code 版本差异较大时可能需要更新。

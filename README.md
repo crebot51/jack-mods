@@ -79,17 +79,90 @@ Translates every message you send into English before it reaches Claude, using *
 
 ## Install
 
-One line (paste into a terminal):
+### Requirements
+
+- [Claude Code](https://code.claude.com) installed, with `claude` working in a terminal. The mods run in both the terminal and the desktop app.
+- translate-en needs either an OpenAI-compatible API (Base URL + key) or a ChatGPT Plus / Pro plan. Signing in with ChatGPT works on macOS only; it uses the `perl` and `security` tools that come with macOS.
+
+### Install all three (recommended)
+
+Paste into a terminal:
 
 ```bash
-claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods
+claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods && claude plugin install quick-commands@jack-mods && claude plugin install translate-en@jack-mods
 ```
 
-To install quick-commands or translate-en, swap the last name for `quick-commands@jack-mods` or `translate-en@jack-mods` (no need to add the marketplace again if you already have).
+This adds the `jack-mods` marketplace (needed once), then installs the three mods for your user, so every project gets them.
 
-Then start a new session. token-band's band shows up on desktop only after the first message; quick-commands' ⚡ and translate-en's 🌐 sit next to the model name.
+### Install only some
 
-Update: `claude plugin update <name>`
-Uninstall: `claude plugin uninstall <name>`
+Add the marketplace once, then install just the ones you want:
+
+```bash
+claude plugin marketplace add crebot51/jack-mods
+```
+
+```bash
+claude plugin install token-band@jack-mods
+```
+
+```bash
+claude plugin install quick-commands@jack-mods
+```
+
+```bash
+claude plugin install translate-en@jack-mods
+```
+
+### After installing
+
+1. Start a **new** session. A session that was already open keeps the mods it started with; run `/reload-plugins` in it, or open a new one.
+2. Check what you got:
+   - **token-band**: the usage band above the prompt box. On desktop it appears after your first message.
+   - **quick-commands**: a ⚡ next to the model name.
+   - **translate-en**: a 🌐 next to the model name, dimmed until it is set up.
+3. Set up translate-en: click 🌐, then
+   - pick **OpenAI-compatible API** and fill in Base URL and key (press Save on each), then *Fetch model list* and pick a model; **or**
+   - pick **ChatGPT subscription**, click *Continue with ChatGPT*, sign in in the browser and allow plan usage, then pick a model;
+   - click *Test*, then turn the status switch on. The 🌐 is no longer dimmed.
+
+To see what is installed:
+
+```bash
+claude plugin list
+```
+
+### Update
+
+Fetch the latest marketplace, then update each mod:
+
+```bash
+claude plugin marketplace update jack-mods && claude plugin update token-band@jack-mods && claude plugin update quick-commands@jack-mods && claude plugin update translate-en@jack-mods
+```
+
+Then start a new session, or run `/reload-plugins` in an open one.
+
+### Uninstall
+
+One mod: `claude plugin uninstall <name>@jack-mods`
+
+All three, and the marketplace:
+
+```bash
+claude plugin uninstall token-band@jack-mods && claude plugin uninstall quick-commands@jack-mods && claude plugin uninstall translate-en@jack-mods && claude plugin marketplace remove jack-mods
+```
+
+If you signed in with ChatGPT in translate-en, click *Sign out* in its panel before uninstalling, so the sign-in is revoked and removed from the Keychain. Otherwise disconnect the app in [ChatGPT settings](https://chatgpt.com/settings/usage) and delete the `claude-translate-en` entries in Keychain Access.
+
+### Troubleshooting
+
+| What you see | What to do |
+|---|---|
+| No ⚡ / 🌐 / band after installing | The session was open before the install: run `/reload-plugins` or start a new session. |
+| token-band shows nothing on desktop | Send one message; the band appears after the first turn. |
+| 🌐 stays dimmed | translate-en is off or not set up: open the panel, finish the setup, turn the status switch on. |
+| A toast says translation failed and the original was sent | The panel's *Test* button shows the provider's error. With OpenCode, free-tier models only work inside OpenCode; pick a paid model. |
+| *Continue with ChatGPT* fails | Make sure your plan is Plus or Pro and you allowed plan usage in the browser; if macOS asks about the Keychain, allow it. Then try again. |
+| `claude plugin install` says the plugin is not found | Run `claude plugin marketplace update jack-mods` and try again. |
 
 > The mod API is an early preview and may need updates across Claude Code versions.
