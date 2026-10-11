@@ -4,6 +4,10 @@
 
 My own Claude Code mods.
 
+All three sit next to the model name below the prompt box: ⚡ quick-commands, 🪙 token-band (when collapsed), 🌐 translate-en.
+
+![Toolbar buttons](docs/toolbar-buttons.png)
+
 ## token-band
 
 A live token-usage band above the prompt box:

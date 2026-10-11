@@ -4,6 +4,10 @@
 
 自己写的 Claude Code mods。
 
+三个 mod 的按钮都在输入框下方、模型名旁边：⚡ quick-commands、🪙 token-band（收起时）、🌐 translate-en。
+
+![输入框下方的按钮](docs/toolbar-buttons.png)
+
 ## token-band
 
 在输入框上方实时显示 token 用量：
