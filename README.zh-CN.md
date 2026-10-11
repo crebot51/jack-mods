@@ -67,7 +67,7 @@
   - **ChatGPT 订阅**：点「Continue with ChatGPT」在浏览器里用 ChatGPT（Plus / Pro）登录并允许使用订阅额度，不需要 API Key，模型列表来自你的账号。按 OpenAI 给开源本地应用的 [Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) 流程实现（PKCE、`127.0.0.1` 本地回调、ID token 验签）。仅支持 macOS
   - 「测试」按钮用当前设置翻译一句示例中文
 - 会翻译的：你打的消息，以及技能、插件、MCP、你自己写的斜杠命令的参数（还有 `/compact` 后面的说明）。纯英文、其他内置命令的参数（`/model`、`/resume` 等）、后台通知原样发送
-- 会在会话的系统提示词里说明一次：用户在学中文，请用简体中文回复；每条翻译过的消息附上中文原文，只有模型能看到，对话记录里显示的是英文译文
+- Claude 只看到英文译文，对话记录里显示的也是译文。会话的系统提示词里只说明一次：用户是想学中文的美国人，请用简体中文回复。不会告诉 Claude 消息翻译过，它看不出你原本用什么语言输入
 - 翻译失败或超过 9 秒没返回，就照原文发送，并弹出提示说明原因
 - 走 OpenAI 兼容接口时，请求会带上固定的 `x-opencode-session` 和自己的 User-Agent（OpenCode Go 要求），其他接口会忽略。这种方式只调用 `/chat/completions`；OpenCode 的免费模型只能在 OpenCode 里用，第三方调用会被拒绝
 

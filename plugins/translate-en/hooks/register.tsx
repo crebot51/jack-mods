@@ -65,11 +65,8 @@ const SYSTEM_PROMPT =
 /** 系统提示词里追加的一节：整个会话只有一份，开着「用中文回复」时才加 */
 export const LEARNER_SECTION_ID = 'translate-en:learner'
 export const LEARNER_NOTE =
-  'About this user: they are an American who has recently been learning Chinese, so they can type in Chinese. ' +
-  'They type their messages in Chinese, but are afraid Claude might not understand their Chinese, ' +
-  'so each of their Chinese messages is machine-translated into English before it reaches you; ' +
-  'the original Chinese follows the message as extra context. ' +
-  'Reply to them in Simplified Chinese, so they can read more Chinese replies and keep learning Chinese.'
+  'About this user: they are an American who wants to learn Chinese. ' +
+  'Reply to them in Simplified Chinese, so they can read more Chinese and keep learning.'
 
 /** 斜杠命令里，参数是给模型看的自由文本、需要翻译的内置命令；其余内置命令的参数是选项或 ID，不翻 */
 export const FREE_TEXT_BUILTINS = new Set(['compact'])
@@ -86,11 +83,6 @@ export function migrateConfig(saved: Record<string, unknown>): Partial<Translate
   delete out.replyInChinese
   delete out.replyMode
   return out as Partial<TranslateConfig>
-}
-
-/** 每条翻译过的消息后面只附原文 */
-export function originalNote(original: string): string {
-  return `Original Chinese message (before machine translation):\n${original}`
 }
 
 /** 翻译等多久就放弃、照原文发送；钩子预算 10 秒，留一点余量 */
@@ -158,7 +150,7 @@ export function errorReason(status: number, text: string): string {
 }
 
 /** 请求带上自己的 User-Agent 和固定的会话 id：opencode Go 等网关要求有 x-opencode-session，其他接口会忽略 */
-const USER_AGENT = 'claude-translate-en/0.5.1'
+const USER_AGENT = 'claude-translate-en/0.6.0'
 
 async function headers($: EngineInterface, c: TranslateConfig): Promise<Record<string, string>> {
   let session = 'translate-en'
@@ -598,8 +590,8 @@ export const register: Register = on => {
     $.ui.toast('🌐 正在翻译成英文…')
     try {
       const text = await translateWithTimeout($, c, e.text)
-      const context = [...(e.context ?? []), originalNote(e.text)]
-      return await next({ ...e, text, context })
+      // 只换成译文，不附原文，也不说明翻译过：模型看不出原本用的什么语言
+      return await next({ ...e, text })
     } catch (err) {
       $.ui.toast(`翻译失败，已发送原文：${err instanceof Error ? err.message : String(err)}`)
       return next(e)
@@ -870,7 +862,7 @@ export const register: Register = on => {
         )}
 
         {msg ? <Text dimColor>{msg}</Text> : null}
-        <Text dimColor>开启后，你发的中文消息和斜杠命令参数会先翻成英文再发给 Claude，并告诉 Claude 你在学中文、请用中文回复。纯英文不翻；翻译失败会照原文发送。</Text>
+        <Text dimColor>开启后，你发的中文消息和斜杠命令参数会先翻成英文再发给 Claude，并告诉 Claude 你是想学中文的美国人、请用中文回复；不会告诉它消息翻译过。纯英文不翻；翻译失败会照原文发送。</Text>
       </Box>
     )
   })

@@ -69,7 +69,7 @@ Translates every message you send into English before it reaches Claude, using *
   - **ChatGPT subscription**: *Continue with ChatGPT* opens your browser to sign in with ChatGPT (Plus / Pro) and allow plan usage; no API key. Models come from your account. It follows OpenAI's [Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) flow for open-source local apps (PKCE, loopback callback on `127.0.0.1`, ID token signature check). macOS only.
   - A Test button translates a sample sentence with the current setup.
 - What gets translated: messages you type, and the arguments of skill, plugin, MCP and your own slash commands (plus `/compact`'s instructions). English-only text, other built-in commands' arguments (`/model`, `/resume`, ...) and background notifications are left as they are.
-- Claude is told, once in the session's system prompt, that you are learning Chinese and want replies in Simplified Chinese; each translated message carries its original text as extra context only the model sees. The transcript shows the English translation.
+- Claude only ever sees the English translation; the transcript shows it too. The session's system prompt says once that the user is an American who wants to learn Chinese and should get replies in Simplified Chinese. Nothing tells Claude that messages were translated, so it can't tell what language you typed in.
 - If translation fails or takes longer than 9 seconds, the original text is sent and a toast says why.
 - Requests to OpenAI-compatible APIs carry a stable `x-opencode-session` header and their own User-Agent, as OpenCode Go requires; other providers ignore them. Only `/chat/completions` is used there, and OpenCode's free-tier models refuse calls from outside OpenCode.
 

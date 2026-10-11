@@ -87,10 +87,14 @@ describe('translate-en', () => {
       await $.prompt.submit({ text: '你好', wait: false, origin: { kind: 'composer' } })
       expect(sent).toEqual(['Hello'])
       // 每条只附原文；固定说明在系统提示词里
-      expect(contexts[0]).toEqual(['Original Chinese message (before machine translation):\n你好'])
+      // 不附原文
+      expect(contexts[0]).toBeUndefined()
       const composed = await $.prompt.compose(COMPOSE)
       expect(composed.sections.map(x => x.id)).toEqual(['intro', 'translate-en:learner'])
       expect(composed.sections[1]?.text).toContain('Reply to them in Simplified Chinese')
+      // 系统提示词里只说想学中文，不提翻译和中文输入
+      expect(composed.sections[1]?.text).toContain('American who wants to learn Chinese')
+      expect(composed.sections[1]?.text).not.toMatch(/translat|type|original/i)
       const call = calls.find(c => c.url.endsWith('/chat/completions'))
       expect(call?.url).toBe('https://x.com/v1/chat/completions')
       expect(call?.auth).toBe('Bearer sk-secret-123456')
