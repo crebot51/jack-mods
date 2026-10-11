@@ -14,6 +14,11 @@
       "name": "quick-commands",
       "source": "./plugins/quick-commands",
       "description": "在模型名右边加一个 ⚡ 按钮，点开面板用点选代替手打斜杠命令，并可直接点选修改 /config 设置；支持中英文界面"
+    },
+    {
+      "name": "translate-en",
+      "source": "./plugins/translate-en",
+      "description": "发消息前用你自己的 OpenAI 兼容接口（自定义 Base URL + Key）把消息翻成英文再发给 Claude；模型名旁常驻 🌐 按钮可设置和开关"
     }
   ]
 }

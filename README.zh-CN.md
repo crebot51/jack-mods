@@ -53,6 +53,20 @@
 ![命令页（中文）](docs/quick-commands-commands-zh.webp)
 ![设置页（中文）](docs/quick-commands-settings-zh.png)
 
+## translate-en
+
+你发出的每条消息，先用**你自己的 OpenAI 兼容接口**（自定义 Base URL + Key）翻成英文再发给 Claude，不占 Claude 订阅的额度。适合学中文的人：用中文打字，Claude 读英文、用中文回复。
+
+- 模型名旁边常驻一个 🌐 按钮，会话一打开就在；翻译关着或还没配置好时是灰色
+- 点开是设置面板：开关、Base URL、API Key、模型（从 `/models` 拉取后在列表里点选，也可以手动填），以及「测试」按钮，用一句示例中文实际调用一次
+- 只翻译你自己打的消息；斜杠命令、纯英文、后台通知原样发送
+- **用中文回复**（默认开启）：在会话的系统提示词里加一节，说明用户在学中文、请用简体中文回复，并在每条翻译过的消息后附上原文。这些只有模型能看到，对话记录里显示的是英文译文
+- 翻译失败或超过 9 秒没返回，就照原文发送，并弹出提示说明原因
+- 请求会带上固定的 `x-opencode-session` 和自己的 User-Agent（OpenCode Go 要求），其他接口会忽略
+- 只调用 `/chat/completions`，模型必须支持这个接口；OpenCode 的免费模型只能在 OpenCode 里用，第三方调用会被拒绝
+
+> Key **明文**保存在插件的本地存储里（`~/.claude/plugins/store/translate-en_*.json`，只有当前 macOS 用户可读）。
+
 ## 安装
 
 一行命令（复制到终端回车即可）：
@@ -61,9 +75,9 @@
 claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods
 ```
 
-想装 quick-commands，把最后的名字换成 `quick-commands@jack-mods`（marketplace 已添加过就不用再 add）。
+想装 quick-commands 或 translate-en，把最后的名字换成 `quick-commands@jack-mods` 或 `translate-en@jack-mods`（marketplace 已添加过就不用再 add）。
 
-装好后开一个新会话：token-band 的用量条桌面端需要先发一条消息才出现；quick-commands 的 ⚡ 在模型名右边。
+装好后开一个新会话：token-band 的用量条桌面端需要先发一条消息才出现；quick-commands 的 ⚡ 和 translate-en 的 🌐 在模型名旁边。
 
 更新：`claude plugin update <名字>`
 卸载：`claude plugin uninstall <名字>`
