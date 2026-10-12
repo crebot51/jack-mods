@@ -4,7 +4,7 @@
 
 Мои моды для Claude Code.
 
-Все три находятся рядом с названием модели под полем ввода: ⚡ quick-commands, 🪙 token-band (в свёрнутом виде), 🌐 translate-en.
+Оба находятся рядом с названием модели под полем ввода: ⚡ quick-commands, 🪙 token-band (в свёрнутом виде).
 
 ![Кнопки на панели](docs/toolbar-buttons.png)
 
@@ -59,44 +59,25 @@
 ![Вкладка «Команды»](docs/quick-commands-commands-en.png)
 ![Вкладка «Настройки»](docs/quick-commands-settings-en.png)
 
-## translate-en
-
-Переводит каждое ваше сообщение на английский перед тем, как оно попадёт к Claude, используя **ваш собственный доступ к модели**, а не подписку Claude. Сделано для изучающих китайский: пишете по-китайски, Claude читает по-английски и отвечает по-китайски.
-
-- Кнопка 🌐 всегда рядом с названием модели, с момента открытия сессии. Она бледная, пока перевод выключен или не настроен.
-- Нажмите её, чтобы открыть панель настроек и выбрать, чем переводить:
-  - **API, совместимый с OpenAI**: Base URL, API-ключ и модель из `/models` (или вписанная вручную).
-  - **Подписка ChatGPT**: «Continue with ChatGPT» открывает браузер, где вы входите в ChatGPT (Plus / Pro) и разрешаете использовать подписку; API-ключ не нужен. Список моделей берётся из вашего аккаунта. Реализовано по схеме OpenAI [Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) для локальных приложений с открытым кодом (PKCE, обратный вызов на `127.0.0.1`, проверка подписи ID-токена). Только macOS.
-  - Кнопка «Тест» переводит пример фразы с текущими настройками.
-- Что переводится: ваши сообщения и аргументы слэш-команд навыков, плагинов, MCP и ваших собственных (а также указания к `/compact`). Текст только на английском, аргументы прочих встроенных команд (`/model`, `/resume`, …) и фоновые уведомления остаются как есть.
-- Claude видит только английский перевод; в истории диалога тоже показан он. Системный промпт сессии один раз сообщает, что пользователь — американец, который хочет выучить китайский, и что отвечать нужно на упрощённом китайском. Нигде не сказано, что сообщения переведены, поэтому Claude не может узнать, на каком языке вы писали.
-- Если перевод не удался или занял больше 9 секунд, отправляется исходный текст, а уведомление объясняет причину.
-- Запросы к API, совместимым с OpenAI, передают постоянный заголовок `x-opencode-session` и собственный User-Agent, как требует OpenCode Go; другие провайдеры их игнорируют. Там используется только `/chat/completions`, а бесплатные модели OpenCode отклоняют вызовы не из OpenCode.
-
-> Подписи на панели пока на китайском.
->
-> Хранение: API-ключ хранится **открытым текстом** в локальном хранилище плагина (`~/.claude/plugins/store/translate-en_*.json`, доступен только вашему пользователю macOS). Данные входа в ChatGPT хранятся **в связке ключей macOS** (`claude-translate-en`). Чтобы отключить вход в ChatGPT, нажмите «Выйти» на панели или отключите приложение в [настройках ChatGPT](https://chatgpt.com/settings/usage).
-
 ## Установка
 
 ### Что нужно
 
 - Установленный [Claude Code](https://code.claude.com), команда `claude` работает в терминале. Моды работают и в терминале, и в приложении для компьютера.
-- Для translate-en нужен API, совместимый с OpenAI (Base URL + ключ), или подписка ChatGPT Plus / Pro. Вход через ChatGPT работает только на macOS и использует встроенные в macOS `perl` и `security`.
 
-### Установить все три (рекомендуется)
+### Установить оба (рекомендуется)
 
 Вставьте в терминал:
 
 ```bash
-claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods && claude plugin install quick-commands@jack-mods && claude plugin install translate-en@jack-mods
+claude plugin marketplace add crebot51/jack-mods && claude plugin install token-band@jack-mods && claude plugin install quick-commands@jack-mods
 ```
 
-Команда добавляет маркетплейс `jack-mods` (нужно один раз), затем ставит три мода для вашего пользователя, так что они будут во всех проектах.
+Команда добавляет маркетплейс `jack-mods` (нужно один раз), затем ставит оба мода для вашего пользователя, так что они будут во всех проектах.
 
-### Установить только некоторые
+### Установить только один
 
-Один раз добавьте маркетплейс, затем поставьте нужные:
+Один раз добавьте маркетплейс, затем поставьте нужный:
 
 ```bash
 claude plugin marketplace add crebot51/jack-mods
@@ -110,21 +91,12 @@ claude plugin install token-band@jack-mods
 claude plugin install quick-commands@jack-mods
 ```
 
-```bash
-claude plugin install translate-en@jack-mods
-```
-
 ### После установки
 
 1. Откройте **новую** сессию. Уже открытая сессия сохраняет моды, с которыми запустилась; выполните в ней `/reload-plugins` или откройте новую.
 2. Проверьте, что всё появилось:
    - **token-band**: полоса расхода над полем ввода. В приложении для компьютера появляется после первого сообщения.
    - **quick-commands**: ⚡ рядом с названием модели.
-   - **translate-en**: 🌐 рядом с названием модели, бледная, пока не настроена.
-3. Настройте translate-en: нажмите 🌐, затем
-   - выберите **API, совместимый с OpenAI**, введите Base URL и ключ (нажмите «Сохранить» у каждого), затем «Получить список моделей» и выберите модель; **или**
-   - выберите **подписку ChatGPT**, нажмите «Continue with ChatGPT», войдите в браузере и разрешите использование подписки, затем выберите модель;
-   - нажмите «Тест», затем включите переключатель «Статус». Значок 🌐 перестанет быть бледным.
 
 Посмотреть, что установлено:
 
@@ -137,7 +109,7 @@ claude plugin list
 Загрузите свежий маркетплейс, затем обновите каждый мод:
 
 ```bash
-claude plugin marketplace update jack-mods && claude plugin update token-band@jack-mods && claude plugin update quick-commands@jack-mods && claude plugin update translate-en@jack-mods
+claude plugin marketplace update jack-mods && claude plugin update token-band@jack-mods && claude plugin update quick-commands@jack-mods
 ```
 
 Затем откройте новую сессию или выполните `/reload-plugins` в открытой.
@@ -146,23 +118,18 @@ claude plugin marketplace update jack-mods && claude plugin update token-band@ja
 
 Один мод: `claude plugin uninstall <name>@jack-mods`
 
-Все три вместе с маркетплейсом:
+Оба вместе с маркетплейсом:
 
 ```bash
-claude plugin uninstall token-band@jack-mods && claude plugin uninstall quick-commands@jack-mods && claude plugin uninstall translate-en@jack-mods && claude plugin marketplace remove jack-mods
+claude plugin uninstall token-band@jack-mods && claude plugin uninstall quick-commands@jack-mods && claude plugin marketplace remove jack-mods
 ```
-
-Если вы входили в ChatGPT через translate-en, перед удалением нажмите «Выйти» на его панели: вход будет отозван и удалён из связки ключей. Если забыли — отключите приложение в [настройках ChatGPT](https://chatgpt.com/settings/usage) и удалите записи `claude-translate-en` в «Связке ключей».
 
 ### Частые проблемы
 
 | Что видно | Что делать |
 |---|---|
-| После установки нет ⚡ / 🌐 / полосы | Сессия была открыта до установки: выполните `/reload-plugins` или откройте новую сессию. |
+| После установки нет ⚡ / полосы | Сессия была открыта до установки: выполните `/reload-plugins` или откройте новую сессию. |
 | token-band ничего не показывает в приложении для компьютера | Отправьте одно сообщение; полоса появляется после первого хода. |
-| 🌐 остаётся бледной | translate-en выключен или не настроен: откройте панель, закончите настройку, включите «Статус». |
-| Уведомление: перевод не удался, отправлен исходный текст | Кнопка «Тест» на панели покажет ошибку провайдера. С OpenCode бесплатные модели работают только внутри OpenCode; выберите платную. |
-| «Continue with ChatGPT» не срабатывает | Убедитесь, что подписка Plus или Pro и что вы разрешили использование подписки в браузере; если macOS спрашивает про связку ключей, разрешите. Затем попробуйте снова. |
 | `claude plugin install` пишет, что плагин не найден | Выполните `claude plugin marketplace update jack-mods` и повторите. |
 
 > API модов — ранний предварительный выпуск; при смене версий Claude Code модам могут понадобиться обновления.
