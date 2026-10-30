@@ -27,10 +27,13 @@ const check = atom({ plugin: 'token-band', key: 'check' } as const, {
 /** 不换行空格 */
 const NBSP = '\u00a0'
 
-/** 12345 -> "12.3k"，1234567 -> "1.23M" */
+/** 12345 -> "12.3k"，179300 -> "179k"，1000000 -> "1M"，12330000 -> "12.3M"：尽量短，免得一行放不下 */
 export function fmt(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`
+  const short = (x: number, unit: string) =>
+    `${(x >= 100 ? x.toFixed(0) : x.toFixed(1)).replace(/\.0$/, '')}${unit}`
+  // 999.6k 四舍五入会变成「1000k」，提前进到 M
+  if (n >= 999_500) return short(n / 1_000_000, 'M')
+  if (n >= 1_000) return short(n / 1_000, 'k')
   return String(n)
 }
 
@@ -240,21 +243,22 @@ export const register: Register = on => {
       ? '—'
       : s.contextTokens == null
         ? `—/${fmt(s.contextWindow)}`
-        : `${fmt(s.contextTokens)}/${fmt(s.contextWindow)} (${Math.round(
+        : `${fmt(s.contextTokens)}/${fmt(s.contextWindow)} ${Math.round(
             (s.contextTokens / s.contextWindow) * 100,
-          )}%)`
+          )}%`
     const parts = [
       ctx,
       `本轮 ${fmt(s.turnOutput)}`,
-      `${avg === null ? '—' : Math.round(avg)} tok/s`,
-      `总输入 ${fmt(s.totalInput ?? 0)}`,
-      `总输出 ${fmt(s.output)}`,
+      `${avg === null ? '—' : Math.round(avg)}/s`,
+      // ↑ 发给模型的（含缓存），↓ 模型生成的
+      `↑${fmt(s.totalInput ?? 0)} ↓${fmt(s.output)}`,
     ]
     const hit = cacheHitRate(s)
     if (hit !== null) parts.push(`缓存 ${Math.round(hit)}%`)
     if (s.usd !== null) parts.push(`$${s.usd.toFixed(2)}`)
-    // 不是订阅账号时没有额度数据，这一段就不显示
-    parts.push(...formatLimits(s.rateLimits ?? []))
+    // 不是订阅账号时没有额度数据，这一段就不显示；几个窗口并成一项，省掉中间的「·」
+    const limits = formatLimits(s.rateLimits ?? [])
+    if (limits.length > 0) parts.push(limits.join(' '))
     // 模型检测只用一个符号：正常 ✅，本轮有异常 ❌（细节在弹出的提示里）
     const health = (await read($, check)).issues.length > 0 ? '❌' : '✅'
 
@@ -264,7 +268,9 @@ export const register: Register = on => {
         <Box flexGrow={1} flexShrink={1}>
           <Text dimColor>
             {/* 每一项内部换成不换行空格，「·」也粘在前一项后面：只在「· 」之后折行，不会把一项劈成两半 */}
-            {parts.map(p => p.replace(/ /g, NBSP)).join(`${NBSP}· `)} {health}
+            {parts.map(p => p.replace(/ /g, NBSP)).join(`${NBSP}· `)}
+            {NBSP}
+            {health}
           </Text>
         </Box>
         <Box flexShrink={0}>

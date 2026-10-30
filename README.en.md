@@ -19,23 +19,23 @@ Click the collapse button and the whole band disappears; only a 🪙 is left at 
 ![Collapsed](docs/token-band-collapsed.png)
 
 ```
-271.1k/1.00M (27%) · this turn 3.3k · 113 tok/s · total in 7.92M · total out 38.4k · cache 98% · $8.58 · 5h 99% · 7d 70% ✅   [collapse]
+271k/1M 27% · this turn 3.3k · 113/s · ↑7.9M ↓38.4k · cache 98% · $8.58 · 5h 99% 7d 70% ✅   [collapse]
 ```
 
 > The band's labels in the screenshots are currently Chinese; the line above shows the same fields in English, in the same order.
 
 | Item | Meaning |
 |---|---|
-| `271.1k/1.00M (27%)` | Current context size / model window |
+| `271k/1M 27%` | Current context size / model window |
 | this turn | Output tokens generated so far this turn, ticking up while the reply streams |
-| `tok/s` | Average output speed: total output ÷ total generation time (first to last token, excluding time to first token) |
-| total in / total out | Session totals, including cache reads/writes and subagents |
+| `/s` | Average output speed: total output ÷ total generation time (first to last token, excluding time to first token) |
+| `↑` / `↓` | Session total input / output, including cache reads/writes and subagents |
 | cache | Share of total input served from cache; higher is cheaper |
 | `$` | Session cost |
 | `5h` / `7d` | Share of the 5-hour / 7-day subscription limit used (hidden on API billing) |
 | `✅` / `❌` | Model check: turns ❌ and shows a toast with the reason when the main thread was switched to another model, the model returned by the API differs from the one requested, or thinking effort was silently lowered |
 
-- On narrow windows the band wraps to two lines, with the collapse button pinned to the right of the first line.
+- Only on very narrow windows the band wraps to two lines, with the collapse button pinned to the right of the first line.
 - You can also type `/tokens` to toggle between expanded and collapsed.
 
 ## quick-commands

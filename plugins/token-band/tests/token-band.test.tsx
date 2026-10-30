@@ -23,7 +23,10 @@ describe('token-band', () => {
   test('数字格式化', async () => {
     expect(fmt(999)).toBe('999')
     expect(fmt(12345)).toBe('12.3k')
-    expect(fmt(1234567)).toBe('1.23M')
+    expect(fmt(179300)).toBe('179k')
+    expect(fmt(1000000)).toBe('1M')
+    expect(fmt(12330000)).toBe('12.3M')
+    expect(fmt(999_700)).toBe('1M')
   })
 
   test('累加用量：总输入含缓存，子 agent 不改上下文，新一轮从零开始', async () => {
@@ -94,7 +97,7 @@ describe('token-band', () => {
       const ui = await $.ui.mount({ plugin: 'token-band', surface, ...BAND })
       // 每一项内部是不换行空格，比较前换回普通空格
       const shown = (await ui.find({ type: 'Text' }))?.text.replace(/\u00a0/g, ' ')
-      expect(shown).toContain('— tok/s')
+      expect(shown).toContain('—/s')
       expect((await ui.find({ type: 'Text' }))?.text).toContain('✅')
       await ui.unmount()
     }
